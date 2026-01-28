@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>养老金计算器 - 专业退休规划工具</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #2980b9;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans SC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary), var(--success));
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px 25px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--info);
+        }
+        
+        .stat-card h3 {
+            color: var(--info);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .calculator-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .result-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h2 i {
+            background: rgba(52, 152, 219, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+        }
+        
+        .info-icon {
+            color: var(--secondary);
+            cursor: pointer;
+            position: relative;
+            display: inline-flex;
+        }
+        
+        .info-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            width: 320px;
+            z-index: 100;
+            top: 30px;
+            left: 0;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            line-height: 1.6;
+        }
+        
+        .info-tooltip strong {
+            color: #3498db;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .info-icon:hover .info-tooltip {
+            display: block;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #e0e6ed;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--secondary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #2980b9;
+            transform: scale(1.2);
+        }
+        
+        .range-value {
+            min-width: 70px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--secondary);
+            background: rgba(52, 152, 219, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 1.05rem;
+        }
+        
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 16px 25px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .result-display {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .result-value {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--success);
+            text-align: center;
+            margin: 25px 0;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .result-details {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 1.05rem;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--success));
+            width: 0;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+        }
+        
+        .recommendation {
+            background: #e3f2fd;
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 0 8px 8px 0;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        
+        .recommendation strong {
+            color: var(--info);
+        }
+        
+        .tips-section {
+            margin-top: 40px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 40px;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .tip-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+        }
+        
+        .tip-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .tip-card h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+        }
+        
+        .tip-card i {
+            background: rgba(52, 152, 219, 0.1);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .tip-card p {
+            color: #555;
+            line-height: 1.7;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+            font-size: 15px;
+            color: var(--gray);
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .footer-info div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: rgba(108, 117, 125, 0.08);
+            border-radius: 20px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .footer-info div:hover {
+            background: rgba(108, 117, 125, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .data-sources {
+            max-width: 800px;
+            margin: 20px auto 0;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .data-sources h3 {
+            color: var(--info);
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .data-sources ul {
+            padding-left: 25px;
+        }
+        
+        .data-sources li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        .data-sources li::before {
+            content: "📊";
+            position: absolute;
+            left: -20px;
+            top: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-info div {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+        
+        /* 新增样式 */
+        .city-selector {
+            display: flex;
+            gap: 15px;
+        }
+        .city-selector .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .location-info {
+            font-size: 0.9rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .location-info i {
+            color: var(--success);
+            margin-right: 5px;
+        }
+        
+        .input-error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .global-error {
+            background: #fdeded;
+            border: 1px solid #fadbd8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-error i, .global-error i {
+            margin-right: 8px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .loading-spinner i {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-container {
+                flex-direction: column;
+            }
+            
+            .result-value {
+                font-size: 2.8rem;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-card {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .city-selector {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 养老金计算器-Power By Deepseek</h1>
+            <p class="subtitle">综合考虑个人收入、缴费年限、投资回报率等关键因素，精准预测您的退休养老金收入，助您科学规划养老生活</p>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>2025年全国平均养老金</h3>
+                    <p>¥4,210/月</p>
+                </div>
+                <div class="stat-card">
+                    <h3>养老金目标替代率</h3>
+                    <p>70%以上</p>
+                </div>
+                <div class="stat-card">
+                    <h3>2025年个人账户记账利率</h3>
+                    <p>5.5%-7.5%</p>
+                </div>
+                <div class="stat-card">
+                    <h3>2025年上海市平均工资</h3>
+                    <p>¥17,922/月</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="calculator-container">
+            <div class="input-section">
+                <h2><i class="fas fa-edit"></i> 个人信息设置</h2>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-user"></i> 当前年龄
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                根据国家卫健委《2023年我国卫生健康事业发展统计公报》，我国居民人均预期寿命为79.2岁，且呈持续增长趋势。城镇职工平均退休年龄为男性60岁，女性55岁。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="age" min="20" max="65" value="30">
+                        <span class="range-value" id="age-value">30岁</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-calendar-alt"></i> 计划退休年龄
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                根据现行政策：男性60岁退休，女干部55岁退休，女职工50岁退休。国家正在研究渐进式延迟退休方案，预计到2045年男女退休年龄统一为65岁。您可以根据个人情况自定义退休年龄（50-70岁）。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="number" id="retirement-age" min="50" max="70" value="60" style="flex: 1;">
+                        <span class="range-value" id="retirement-age-value">60岁</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-money-bill-wave"></i> 当前月收入 (元)
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                国家统计局数据显示，2024年全国规模以上企业就业人员月平均工资为9580元。一线城市平均工资约为全国平均水平的1.5-2倍。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="income" min="3000" max="50000" value="6000" step="500">
+                        <span class="range-value" id="income-value">6,000元</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-percent"></i> 缴费基数比例
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                根据《社会保险法》，缴费基数应在当地社平工资60%-300%之间。个人缴费比例为8%，单位缴费比例为16%。选择较高缴费基数可提升养老金水平。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="contribution-rate" min="60" max="300" value="100">
+                        <span class="range-value" id="contribution-rate-value">100%</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-history"></i> 已缴费年限
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                领取养老金需满足最低缴费15年。根据人社部数据，2024年全国平均缴费年限为27年。缴费年限每增加1年，基础养老金增加约1%。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="years-paid" min="0" max="40" value="10">
+                        <span class="range-value" id="years-paid-value">10年</span>
+                    </div>
+                </div>
+                
+                <!-- 新增：当前个人账户余额 -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-piggy-bank"></i> 当前个人账户余额 (元)
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                截至2025年，全国个人养老金账户平均余额约为12万元，一线城市普遍高于20万元。账户余额将影响个人账户养老金水平。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="current-balance" min="0" max="800000" value="30000" step="1000">
+                        <span class="range-value" id="current-balance-value">30,000元</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-chart-line"></i> 工资年增长率
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                过去十年我国平均工资年增长率约8%。考虑到经济发展新常态，未来十年工资增长率预计在4%左右。国家规划目标为居民收入增长与GDP增长基本同步。您可依据当前经济环境合理设置工资增长率。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="salary-growth" min="0" max="10" value="0" step="0.5">
+                        <span class="range-value" id="salary-growth-value">0%</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-coins"></i> 个人账户收益率
+                        <span class="info-icon">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="info-tooltip">
+                                <strong>参考依据</strong>
+                                人社部公布2024年职工养老保险个人账户记账利率为6.25%。历史平均记账利率约为5%-8%。该利率由国务院统一确定，参考银行存款利率和物价指数等因素。您可依据当前经济环境合理设置个人账户收益率。
+                            </span>
+                        </span>
+                    </label>
+                    <div class="range-container">
+                        <input type="range" id="return-rate" min="2" max="12" value="5" step="0.5">
+                        <span class="range-value" id="return-rate-value">5%</span>
+                    </div>
+                </div>
+                
+                <!-- 重构：预期退休地选择 -->
+                <div class="city-selector">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marked-alt"></i> 预期退休省份</label>
+                        <select id="province">
+                            <option value="">-- 选择省份 --</option>
+                            <!-- 各省份由JS动态生成 -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-city"></i> 预期退休城市</label>
+                        <select id="city">
+                            <option value="">-- 选择城市 --</option>
+                            <!-- 各城市由JS动态生成 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="location-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="location-info-text">请选择省份和城市获取当地最新平均工资数据</span>
+                </div>
+                
+                <button id="calculate-btn" class="btn">
+                    <i class="fas fa-calculator"></i> 计算养老金
+                </button>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="save-settings-btn" class="btn" style="background: #9b59b6; padding: 12px;">
+                        <i class="fas fa-save"></i> 保存设置
+                    </button>
+                    <button id="view-history-btn" class="btn" style="background: #34495e; padding: 12px;">
+                        <i class="fas fa-history"></i> 查看历史
+                    </button>
+                </div>
+                
+                <!-- 历史记录模态框 -->
+                <div id="history-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+                    <div class="modal-content" style="background: white; padding: 25px; border-radius: 10px; width: 80%; max-width: 800px; max-height: 80vh; overflow-y: auto; position: relative;">
+                        <h3 style="margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--light); padding-bottom: 15px;"><i class="fas fa-history"></i> 计算历史记录</h3>
+                        <div id="history-list" style="margin: 15px 0;"></div>
+                        <button id="close-history-btn" class="btn" style="background: #95a5a6; margin-top: 15px;">关闭</button>
+                        <button id="clear-history-btn" class="btn" style="background: #e74c3c; margin-top: 15px; margin-left: 10px;">清空历史</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2><i class="fas fa-chart-line"></i> 计算结果分析</h2>
+                
+                <div class="result-display">
+                    <div class="result-value">¥8,650/月</div>
+                    <p style="text-align: center; color: #7f8c8d; font-size: 1.1rem;">预估退休后每月可领取养老金</p>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 58%;"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span>0%</span>
+                            <span>养老金替代率</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <span>基础养老金：</span>
+                            <span class="detail-value">¥5,420/月</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>个人账户养老金：</span>
+                            <span class="detail-value">¥3,230/月</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>总缴费年限：</span>
+                            <span class="detail-value">35年</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>养老金替代率：</span>
+                            <span class="detail-value">58%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>全国平均养老金：</span>
+                            <span class="detail-value">¥4,210/月</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>目标替代率：</span>
+                            <span class="detail-value">70%以上</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>退休地平均工资：</span>
+                            <span class="detail-value">¥12,500/月</span>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendation">
+                        <strong><i class="fas fa-lightbulb"></i> 优化建议：</strong> 
+                        您的养老金替代率低于国际劳工组织建议的70%标准。建议：1) 延长工作年限至65岁；2) 提高缴费基数至120%；3) 参加个人养老金计划，每年可享受最高¥5,400税收优惠。
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tips-section">
+            <h2><i class="fas fa-lightbulb"></i> 养老金优化策略</h2>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3><i class="fas fa-coins"></i> 提高缴费基数</h3>
+                    <p>在政策允许范围内（60%-300%社平工资）提高养老保险缴费基数。缴费基数每提高10%，个人账户养老金可增加约8%。</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3><i class="fas fa-user-clock"></i> 延长工作年限</h3>
+                    <p>每多工作一年，缴费年限增加，养老金也会相应提高5-8%。65岁退休比60岁退休养老金可增加30%以上。</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3><i class="fas fa-piggy-bank"></i> 个人养老金账户</h3>
+                    <p>参加个人养老金制度，每年最高缴存¥12,000，享受税收优惠。按6%收益率计算，30年积累可达¥100万以上。</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3><i class="fas fa-chart-pie"></i> 多元化投资</h3>
+                    <p>养老储蓄应合理配置：50%稳健产品（存款、国债），30%平衡型产品（理财、债券基金），20%成长型产品（指数基金）。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div><i class="fas fa-user"></i> 作者：何艳林</div>
+                    <div><i class="fas fa-code-branch"></i> 版本：V1.2.0</div>
+                    <div><i class="fas fa-calendar"></i> 更新日期：2026年1月</div>
+                </div>
+                
+                <div class="footer-info">
+                    <div><i class="fab fa-github"></i> GitHub：<a href="https://github.com/caifugao110/Pension_Calculator" target="_blank">https://github.com/caifugao110/Pension_Calculator</a></div>
+                </div>
+                
+                <div class="footer-info">
+                    <div><i class="fas fa-info-circle"></i> 免责声明：计算结果仅供参考，实际养老金以退休时当地社保部门核算为准</div>
+                </div>
+                
+                <div class="data-sources">
+                    <h3><i class="fas fa-book"></i> 数据来源与参考依据</h3>
+                    <ul>
+                        <li>国家统计局《2024年国民经济和社会发展统计公报》</li>
+                        <li>人力资源和社会保障部《2024年度人力资源和社会保障事业发展统计公报》</li>
+                        <li>国务院《"十四五"国家老龄事业发展和养老服务体系规划》</li>
+                        <li>各省市人力资源和社会保障局2025年社保缴费基数通知</li>
+                        <li>世界银行《中国养老金融改革报告》</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟从API获取数据的函数
+        async function fetchSalaryData() {
+            // 在实际应用中，这里会调用真实的API
+            // 为了演示目的，我们返回一个模拟的Promise
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        "北京": {
+                            "北京": 18717
+                        },
+                        "天津": {
+                            "天津": 11870
+                        },
+                        "河北": {
+                            "石家庄": 8087,
+                            "唐山": 8087,
+                            "秦皇岛": 8087,
+                            "邯郸": 8087,
+                            "邢台": 8087,
+                            "保定": 8087,
+                            "张家口": 8087,
+                            "承德": 8087,
+                            "沧州": 8087,
+                            "廊坊": 8087,
+                            "衡水": 8087
+                        },
+                        "山西": {
+                            "太原": 8148,
+                            "大同": 8148,
+                            "阳泉": 8148,
+                            "长治": 8148,
+                            "晋城": 8148,
+                            "朔州": 8148,
+                            "晋中": 8148,
+                            "运城": 8148,
+                            "忻州": 8148,
+                            "临汾": 8148,
+                            "吕梁": 8148
+                        },
+                        "内蒙古": {
+                            "呼和浩特": 10342,
+                            "包头": 10342,
+                            "乌海": 10342,
+                            "赤峰": 10342,
+                            "通辽": 10342,
+                            "鄂尔多斯": 10342,
+                            "呼伦贝尔": 10342,
+                            "巴彦淖尔": 10342,
+                            "乌兰察布": 10342,
+                            "兴安盟": 10342,
+                            "锡林郭勒盟": 10342,
+                            "阿拉善盟": 10342
+                        },
+                        "辽宁": {
+                            "沈阳": 10342,
+                            "大连": 10342,
+                            "鞍山": 10342,
+                            "抚顺": 10342,
+                            "本溪": 10342,
+                            "丹东": 10342,
+                            "锦州": 10342,
+                            "营口": 10342,
+                            "阜新": 10342,
+                            "辽阳": 10342,
+                            "盘锦": 10342,
+                            "铁岭": 10342,
+                            "朝阳": 10342,
+                            "葫芦岛": 10342
+                        },
+                        "吉林": {
+                            "长春": 10342,
+                            "吉林": 10342,
+                            "四平": 10342,
+                            "辽源": 10342,
+                            "通化": 10342,
+                            "白山": 10342,
+                            "松原": 10342,
+                            "白城": 10342,
+                            "延边朝鲜族自治州": 10342
+                        },
+                        "黑龙江": {
+                            "哈尔滨": 10342,
+                            "齐齐哈尔": 10342,
+                            "鸡西": 10342,
+                            "鹤岗": 10342,
+                            "双鸭山": 10342,
+                            "大庆": 10342,
+                            "伊春": 10342,
+                            "佳木斯": 10342,
+                            "七台河": 10342,
+                            "牡丹江": 10342,
+                            "黑河": 10342,
+                            "绥化": 10342,
+                            "大兴安岭地区": 10342
+                        },
+                        "上海": {
+                            "上海": 17500
+                        },
+                        "江苏": {
+                            "南京": 10768,
+                            "无锡": 10768,
+                            "徐州": 10768,
+                            "常州": 10768,
+                            "苏州": 10768,
+                            "南通": 10768,
+                            "连云港": 10768,
+                            "淮安": 10768,
+                            "盐城": 10768,
+                            "扬州": 10768,
+                            "镇江": 10768,
+                            "泰州": 10768,
+                            "宿迁": 10768
+                        },
+                        "浙江": {
+                            "杭州": 11437,
+                            "宁波": 11437,
+                            "温州": 11437,
+                            "嘉兴": 11437,
+                            "湖州": 11437,
+                            "绍兴": 11437,
+                            "金华": 11437,
+                            "衢州": 11437,
+                            "舟山": 11437,
+                            "台州": 11437,
+                            "丽水": 11437
+                        },
+                        "安徽": {
+                            "合肥": 8785,
+                            "芜湖": 8785,
+                            "蚌埠": 8785,
+                            "淮南": 8785,
+                            "马鞍山": 8785,
+                            "淮北": 8785,
+                            "铜陵": 8785,
+                            "安庆": 8785,
+                            "黄山": 8785,
+                            "滁州": 8785,
+                            "阜阳": 8785,
+                            "宿州": 8785,
+                            "六安": 8785,
+                            "亳州": 8785,
+                            "池州": 8785,
+                            "宣城": 8785
+                        },
+                        "福建": {
+                            "福州": 9365,
+                            "厦门": 9365,
+                            "莆田": 9365,
+                            "三明": 9365,
+                            "泉州": 9365,
+                            "漳州": 9365,
+                            "南平": 9365,
+                            "龙岩": 9365,
+                            "宁德": 9365
+                        },
+                        "江西": {
+                            "南昌": 7979,
+                            "景德镇": 7979,
+                            "萍乡": 7979,
+                            "九江": 7979,
+                            "新余": 7979,
+                            "鹰潭": 7979,
+                            "赣州": 7979,
+                            "吉安": 7979,
+                            "宜春": 7979,
+                            "抚州": 7979,
+                            "上饶": 7979
+                        },
+                        "山东": {
+                            "济南": 10342,
+                            "青岛": 10342,
+                            "淄博": 10342,
+                            "枣庄": 10342,
+                            "东营": 10342,
+                            "烟台": 10342,
+                            "潍坊": 10342,
+                            "济宁": 10342,
+                            "泰安": 10342,
+                            "威海": 10342,
+                            "日照": 10342,
+                            "临沂": 10342,
+                            "德州": 10342,
+                            "聊城": 10342,
+                            "滨州": 10342,
+                            "菏泽": 10342
+                        },
+                        "河南": {
+                            "郑州": 10342,
+                            "开封": 10342,
+                            "洛阳": 10342,
+                            "平顶山": 10342,
+                            "安阳": 10342,
+                            "鹤壁": 10342,
+                            "新乡": 10342,
+                            "焦作": 10342,
+                            "濮阳": 10342,
+                            "许昌": 10342,
+                            "漯河": 10342,
+                            "三门峡": 10342,
+                            "南阳": 10342,
+                            "商丘": 10342,
+                            "信阳": 10342,
+                            "周口": 10342,
+                            "驻马店": 10342,
+                            "省直辖县级行政区划": 10342
+                        },
+                        "湖北": {
+                            "武汉": 10342,
+                            "黄石": 10342,
+                            "十堰": 10342,
+                            "宜昌": 10342,
+                            "襄阳": 10342,
+                            "鄂州": 10342,
+                            "荆门": 10342,
+                            "孝感": 10342,
+                            "荆州": 10342,
+                            "黄冈": 10342,
+                            "咸宁": 10342,
+                            "随州": 10342,
+                            "恩施土家族苗族自治州": 10342,
+                            "省直辖县级行政区划": 10342
+                        },
+                        "湖南": {
+                            "长沙": 10342,
+                            "株洲": 10342,
+                            "湘潭": 10342,
+                            "衡阳": 10342,
+                            "邵阳": 10342,
+                            "岳阳": 10342,
+                            "常德": 10342,
+                            "张家界": 10342,
+                            "益阳": 10342,
+                            "郴州": 10342,
+                            "永州": 10342,
+                            "怀化": 10342,
+                            "娄底": 10342,
+                            "湘西土家族苗族自治州": 10342
+                        },
+                        "广东": {
+                            "广州": 11283,
+                            "韶关": 11283,
+                            "深圳": 11283,
+                            "珠海": 11283,
+                            "汕头": 11283,
+                            "佛山": 11283,
+                            "江门": 11283,
+                            "湛江": 11283,
+                            "茂名": 11283,
+                            "肇庆": 11283,
+                            "惠州": 11283,
+                            "梅州": 11283,
+                            "汕尾": 11283,
+                            "河源": 11283,
+                            "阳江": 11283,
+                            "清远": 11283,
+                            "东莞": 11283,
+                            "中山": 11283,
+                            "潮州": 11283,
+                            "揭阳": 11283,
+                            "云浮": 11283
+                        },
+                        "广西": {
+                            "南宁": 10342,
+                            "柳州": 10342,
+                            "桂林": 10342,
+                            "梧州": 10342,
+                            "北海": 10342,
+                            "防城港": 10342,
+                            "钦州": 10342,
+                            "贵港": 10342,
+                            "玉林": 10342,
+                            "百色": 10342,
+                            "贺州": 10342,
+                            "河池": 10342,
+                            "来宾": 10342,
+                            "崇左": 10342
+                        },
+                        "海南": {
+                            "海口": 10342,
+                            "三亚": 10342,
+                            "三沙": 10342,
+                            "儋州": 10342,
+                            "省直辖县级行政区划": 10342
+                        },
+                        "重庆": {
+                            "重庆": 10342
+                        },
+                        "四川": {
+                            "成都": 10342,
+                            "自贡": 10342,
+                            "攀枝花": 10342,
+                            "泸州": 10342,
+                            "德阳": 10342,
+                            "绵阳": 10342,
+                            "广元": 10342,
+                            "遂宁": 10342,
+                            "内江": 10342,
+                            "乐山": 10342,
+                            "南充": 10342,
+                            "眉山": 10342,
+                            "宜宾": 10342,
+                            "广安": 10342,
+                            "达州": 10342,
+                            "雅安": 10342,
+                            "巴中": 10342,
+                            "资阳": 10342,
+                            "阿坝藏族羌族自治州": 10342,
+                            "甘孜藏族自治州": 10342,
+                            "凉山彝族自治州": 10342
+                        },
+                        "贵州": {
+                            "贵阳": 10342,
+                            "六盘水": 10342,
+                            "遵义": 10342,
+                            "安顺": 10342,
+                            "毕节": 10342,
+                            "铜仁": 10342,
+                            "黔西南布依族苗族自治州": 10342,
+                            "黔东南苗族侗族自治州": 10342,
+                            "黔南布依族苗族自治州": 10342
+                        },
+                        "云南": {
+                            "昆明": 10342,
+                            "曲靖": 10342,
+                            "玉溪": 10342,
+                            "保山": 10342,
+                            "昭通": 10342,
+                            "丽江": 10342,
+                            "普洱": 10342,
+                            "临沧": 10342,
+                            "楚雄彝族自治州": 10342,
+                            "红河哈尼族彝族自治州": 10342,
+                            "文山壮族苗族自治州": 10342,
+                            "西双版纳傣族自治州": 10342,
+                            "大理白族自治州": 10342,
+                            "德宏傣族景颇族自治州": 10342,
+                            "怒江傈僳族自治州": 10342,
+                            "迪庆藏族自治州": 10342
+                        },
+                        "西藏": {
+                            "拉萨": 10342,
+                            "日喀则": 10342,
+                            "昌都": 10342,
+                            "林芝": 10342,
+                            "山南": 10342,
+                            "那曲": 10342,
+                            "阿里地区": 10342
+                        },
+                        "陕西": {
+                            "西安": 10342,
+                            "铜川": 10342,
+                            "宝鸡": 10342,
+                            "咸阳": 10342,
+                            "渭南": 10342,
+                            "延安": 10342,
+                            "汉中": 10342,
+                            "榆林": 10342,
+                            "安康": 10342,
+                            "商洛": 10342
+                        },
+                        "甘肃": {
+                            "兰州": 10342,
+                            "嘉峪关": 10342,
+                            "金昌": 10342,
+                            "白银": 10342,
+                            "天水": 10342,
+                            "武威": 10342,
+                            "张掖": 10342,
+                            "平凉": 10342,
+                            "酒泉": 10342,
+                            "庆阳": 10342,
+                            "定西": 10342,
+                            "陇南": 10342,
+                            "临夏回族自治州": 10342,
+                            "甘南藏族自治州": 10342
+                        },
+                        "青海": {
+                            "西宁": 10342,
+                            "海东": 10342,
+                            "海北藏族自治州": 10342,
+                            "黄南藏族自治州": 10342,
+                            "海南藏族自治州": 10342,
+                            "果洛藏族自治州": 10342,
+                            "玉树藏族自治州": 10342,
+                            "海西蒙古族藏族自治州": 10342
+                        },
+                        "宁夏": {
+                            "银川": 10342,
+                            "石嘴山": 10342,
+                            "吴忠": 10342,
+                            "固原": 10342,
+                            "中卫": 10342
+                        },
+                        "新疆": {
+                            "乌鲁木齐": 10342,
+                            "克拉玛依": 10342,
+                            "吐鲁番": 10342,
+                            "哈密": 10342,
+                            "昌吉回族自治州": 10342,
+                            "博尔塔拉蒙古自治州": 10342,
+                            "巴音郭楞蒙古自治州": 10342,
+                            "阿克苏地区": 10342,
+                            "克孜勒苏柯尔克孜自治州": 10342,
+                            "喀什地区": 10342,
+                            "和田地区": 10342,
+                            "伊犁哈萨克自治州": 10342,
+                            "塔城地区": 10342,
+                            "阿勒泰地区": 10342,
+                            "自治区直辖县级行政区划": 10342
+                        },
+                        "全国": {
+                            "全国": 10245
+                        }
+                    });
+                }, 500); // 模拟网络延迟
+            });
+        }
+
+        // 存储薪资数据
+        let avgSalaryData = {};
+        
+        // 初始化省份下拉框
+        const provinceSelect = document.getElementById('province');
+        const citySelect = document.getElementById('city');
+        
+        // 页面加载时获取数据
+        async function initializeApp() {
+            try {
+                // 显示加载状态
+                document.getElementById('location-info-text').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载最新数据...';
+                
+                // 获取最新数据
+                avgSalaryData = await fetchSalaryData();
+                
+                // 添加省份选项
+                Object.keys(avgSalaryData).forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province;
+                    option.textContent = province;
+                    provinceSelect.appendChild(option);
+                });
+                
+                // 更新位置信息
+                document.getElementById('location-info-text').textContent = "请选择省份和城市获取当地最新平均工资数据，未选中城市默认为全国2025年平均工资：¥10,245/月";
+                
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                document.getElementById('location-info-text').textContent = "数据加载失败，请刷新页面重试";
+            }
+        }
+        
+        // 初始化应用
+        initializeApp();
+        
+        // 省份变化时更新城市选项
+        provinceSelect.addEventListener('change', function() {
+            citySelect.innerHTML = '<option value="">-- 选择城市 --</option>';
+            const province = this.value;
+            
+            if (province && avgSalaryData[province]) {
+                Object.keys(avgSalaryData[province]).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+                
+                // 自动选择第一个城市
+                if (citySelect.options.length > 1) {
+                    citySelect.selectedIndex = 1;
+                }
+            }
+            
+            updateLocationInfo();
+        });
+        
+        // 更新城市信息
+        function updateLocationInfo() {
+            const province = provinceSelect.value;
+            const city = citySelect.value;
+            let salary = 0;
+            let infoText = '';
+            
+            if (province && city) {
+                if (avgSalaryData[province] && avgSalaryData[province][city]) {
+                    salary = avgSalaryData[province][city];
+                    infoText = `${province}${city}2025年平均工资：¥${salary.toLocaleString('zh-CN')}/月`;
+                } else if (province === "全国") {
+                    salary = avgSalaryData["全国"]["全国"];
+                    infoText = `2025年全国平均工资：¥${salary.toLocaleString('zh-CN')}/月`;
+                } else {
+                    salary = avgSalaryData[province]["其他"] || avgSalaryData["全国"]["全国"];
+                    infoText = `${province}2025年平均工资：¥${salary.toLocaleString('zh-CN')}/月`;
+                }
+            } else {
+                infoText = "请选择省份和城市获取当地最新平均工资数据，未选中城市默认为全国2025年平均工资：¥10,245/月";
+            }
+            
+            document.getElementById('location-info-text').textContent = infoText;
+            return salary;
+        }
+        
+        // 初始更新位置信息
+        updateLocationInfo();
+        
+        // 城市变化时更新信息
+        citySelect.addEventListener('change', updateLocationInfo);
+        
+        // 更新滑块值显示
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const valueDisplay = document.getElementById(`${slider.id}-value`);
+            updateValueDisplay(slider, valueDisplay);
+            
+            slider.addEventListener('input', () => {
+                updateValueDisplay(slider, valueDisplay);
+            });
+        });
+        
+        // 为退休年龄输入框添加事件监听器
+        const retirementAgeInput = document.getElementById('retirement-age');
+        const retirementAgeValue = document.getElementById('retirement-age-value');
+        
+        retirementAgeInput.addEventListener('input', () => {
+            retirementAgeValue.textContent = retirementAgeInput.value + '岁';
+        });
+        
+        function updateValueDisplay(slider, display) {
+            if (slider.id === 'income' || slider.id === 'current-balance') {
+                display.textContent = new Intl.NumberFormat('zh-CN').format(slider.value) + '元';
+            } else if (slider.id === 'salary-growth' || slider.id === 'return-rate') {
+                display.textContent = slider.value + '%';
+            } else if (slider.id === 'contribution-rate') {
+                display.textContent = slider.value + '%';
+            } else if (slider.id === 'years-paid') {
+                display.textContent = slider.value + '年';
+            } else {
+                display.textContent = slider.value + '岁';
+            }
+        }
+        
+        // 计算按钮事件
+        document.getElementById('calculate-btn').addEventListener('click', calculatePension);
+        
+        // 保存设置按钮事件
+        document.getElementById('save-settings-btn').addEventListener('click', function() {
+            DataPersistence.saveCurrentSettings();
+        });
+        
+        // 查看历史按钮事件
+        document.getElementById('view-history-btn').addEventListener('click', function() {
+            showCalculationHistory();
+        });
+        
+        // 关闭历史记录模态框
+        document.getElementById('close-history-btn').addEventListener('click', function() {
+            document.getElementById('history-modal').style.display = 'none';
+        });
+        
+        // 清空历史记录
+        document.getElementById('clear-history-btn').addEventListener('click', function() {
+            if (confirm('确定要清空所有历史记录吗？此操作不可撤销。')) {
+                DataPersistence.clearAllData();
+                document.getElementById('history-modal').style.display = 'none';
+                alert('历史记录已清空');
+            }
+        });
+        
+        // 点击模态框外部关闭
+        document.getElementById('history-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+        
+        // 应用计算结果到UI
+        function applyCalculationResult(resultData) {
+            // 更新UI显示
+            document.querySelector('.result-value').textContent = `¥${resultData.totalPension.toLocaleString('zh-CN')}/月`;
+            document.querySelector('.progress-fill').style.width = `${Math.min(resultData.replacementRate, 100)}%`;
+            
+            // 更新详细数据
+            const detailValues = document.querySelectorAll('.detail-value');
+            detailValues[0].textContent = `¥${resultData.basePension.toLocaleString('zh-CN')}/月`;
+            detailValues[1].textContent = `¥${resultData.personalPension.toLocaleString('zh-CN')}/月`;
+            detailValues[2].textContent = `${resultData.totalContributionYears}年`;
+            detailValues[3].textContent = `${resultData.replacementRate}%`;
+            detailValues[4].textContent = `¥4,210/月`;
+            detailValues[5].textContent = `70%以上`;
+            detailValues[6].textContent = `¥${resultData.localAvgSalary.toLocaleString('zh-CN')}/月`;
+            
+            // 更新建议
+            const recommendation = document.querySelector('.recommendation');
+            if (resultData.replacementRate < 50) {
+                recommendation.innerHTML = `<strong><i class="fas fa-lightbulb"></i> 优化建议：</strong> 您的养老金替代率较低（${resultData.replacementRate}%）。建议：1) 延长工作年限至65岁；2) 提高缴费基数至150%；3) 每年增加¥10,000个人养老保险补充缴费。`;
+                recommendation.style.background = '#fdecea';
+                recommendation.style.borderLeftColor = '#e74c3c';
+            } else if (resultData.replacementRate < 70) {
+                recommendation.innerHTML = `<strong><i class="fas fa-lightbulb"></i> 优化建议：</strong> 您的养老金替代率（${resultData.replacementRate}%）接近基本生活需求。建议：1) 延长工作年限至63岁；2) 提高缴费基数至120%；3) 每年增加¥6,000个人养老金储蓄。`;
+                recommendation.style.background = '#fff8e1';
+                recommendation.style.borderLeftColor = '#f39c12';
+            } else {
+                recommendation.innerHTML = `<strong><i class="fas fa-lightbulb"></i> 优化建议：</strong> 恭喜！您的养老金替代率（${resultData.replacementRate}%）已达到较理想水平。建议：1) 保持现有缴费水平；2) 增加养老生活质量储备；3) 考虑提前退休计划。`;
+                recommendation.style.background = '#e8f5e9';
+                recommendation.style.borderLeftColor = '#27ae60';
+            }
+        }
+        
+        // 显示计算历史的函数
+        function showCalculationHistory() {
+            const history = DataPersistence.getCalculationHistory();
+            const historyList = document.getElementById('history-list');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">暂无历史记录</p>';
+            } else {
+                // 按时间倒序排列
+                history.reverse();
+                
+                let html = '<div class="history-items" style="display: grid; gap: 15px;">';
+                
+                history.forEach((item, index) => {
+                    html += `
+                    <div class="history-item" style="border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #f9f9f9;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong>${item.date}</strong>
+                            <button onclick="loadHistoryItem(${index})" class="btn" style="background: #2ecc71; padding: 6px 12px; font-size: 0.9rem;">载入此记录</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <div><strong>月养老金:</strong> ¥${item.result.totalPension.toLocaleString('zh-CN')}</div>
+                            <div><strong>基础养老金:</strong> ¥${item.result.basePension.toLocaleString('zh-CN')}</div>
+                            <div><strong>个人账户养老金:</strong> ¥${item.result.personalPension.toLocaleString('zh-CN')}</div>
+                            <div><strong>缴费年限:</strong> ${item.result.totalContributionYears}年</div>
+                            <div><strong>替代率:</strong> ${item.result.replacementRate}%</div>
+                            <div><strong>退休地平均工资:</strong> ¥${item.result.localAvgSalary.toLocaleString('zh-CN')}/月</div>
+                        </div>
+                    </div>
+                    `;
+                });
+                
+                html += '</div>';
+                historyList.innerHTML = html;
+            }
+            
+            document.getElementById('history-modal').style.display = 'flex';
+        }
+        
+        // 载入历史记录项
+        function loadHistoryItem(index) {
+            const history = DataPersistence.getCalculationHistory();
+            if (index >= 0 && index < history.length) {
+                const item = history[history.length - 1 - index]; // 因为在显示时反转了数组
+                
+                // 恢复设置
+                document.getElementById('age').value = item.settings.age;
+                document.getElementById('retirement-age').value = item.settings.retirementAge;
+                document.getElementById('income').value = item.settings.income;
+                document.getElementById('contribution-rate').value = item.settings.contributionRate;
+                document.getElementById('years-paid').value = item.settings.yearsPaid;
+                document.getElementById('current-balance').value = item.settings.currentBalance;
+                document.getElementById('salary-growth').value = item.settings.salaryGrowth;
+                document.getElementById('return-rate').value = item.settings.returnRate;
+                
+                // 更新显示值
+                updateValueDisplay(document.getElementById('age'), document.getElementById('age-value'));
+                updateValueDisplay(document.getElementById('income'), document.getElementById('income-value'));
+                updateValueDisplay(document.getElementById('contribution-rate'), document.getElementById('contribution-rate-value'));
+                updateValueDisplay(document.getElementById('years-paid'), document.getElementById('years-paid-value'));
+                updateValueDisplay(document.getElementById('current-balance'), document.getElementById('current-balance-value'));
+                updateValueDisplay(document.getElementById('salary-growth'), document.getElementById('salary-growth-value'));
+                updateValueDisplay(document.getElementById('return-rate'), document.getElementById('return-rate-value'));
+                
+                // 设置省份和城市
+                if (item.settings.province) {
+                    document.getElementById('province').value = item.settings.province;
+                    
+                    // 触发省份选择事件以加载对应的城市
+                    const provinceEvent = new Event('change');
+                    document.getElementById('province').dispatchEvent(provinceEvent);
+                    
+                    // 等待城市加载完成后设置城市值
+                    setTimeout(() => {
+                        if (item.settings.city) {
+                            document.getElementById('city').value = item.settings.city;
+                            
+                            // 触发城市选择事件
+                            const cityEvent = new Event('change');
+                            document.getElementById('city').dispatchEvent(cityEvent);
+                        }
+                        
+                        // 重新计算养老金
+                        calculatePension();
+                        
+                        // 关闭历史记录模态框
+                        document.getElementById('history-modal').style.display = 'none';
+                    }, 100);
+                } else {
+                    // 重新计算养老金
+                    calculatePension();
+                    
+                    // 关闭历史记录模态框
+                    document.getElementById('history-modal').style.display = 'none';
+                }
+            }
+        }
+        
+        function validateInputs() {
+            const age = parseInt(document.getElementById('age').value);
+            const retirementAge = parseInt(document.getElementById('retirement-age').value);
+            const income = parseInt(document.getElementById('income').value);
+            const contributionRate = parseInt(document.getElementById('contribution-rate').value);
+            const yearsPaid = parseInt(document.getElementById('years-paid').value);
+            const currentBalance = parseInt(document.getElementById('current-balance').value);
+            const salaryGrowth = parseFloat(document.getElementById('salary-growth').value);
+            const returnRate = parseFloat(document.getElementById('return-rate').value);
+            
+            // 清除之前的错误信息
+            clearErrors();
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            // 验证年龄
+            if (isNaN(age) || age < 18 || age > 65) {
+                showError('当前年龄必须在18-65岁之间');
+                isValid = false;
+            }
+            
+            // 验证退休年龄
+            if (isNaN(retirementAge) || retirementAge < 50 || retirementAge > 70) {
+                showError('退休年龄必须在50-70岁之间');
+                isValid = false;
+            } else if (retirementAge <= age) {
+                showError('退休年龄必须大于当前年龄');
+                isValid = false;
+            }
+            
+            // 验证收入
+            if (isNaN(income) || income < 3000 || income > 1000000) {
+                showError('月收入必须在3000-1000000元之间');
+                isValid = false;
+            }
+            
+            // 验证缴费基数比例
+            if (isNaN(contributionRate) || contributionRate < 60 || contributionRate > 300) {
+                showError('缴费基数比例必须在60%-300%之间');
+                isValid = false;
+            }
+            
+            // 验证已缴费年限
+            if (isNaN(yearsPaid) || yearsPaid < 0 || yearsPaid > 50) {
+                showError('已缴费年限不能超过50年');
+                isValid = false;
+            }
+            
+            // 验证个人账户余额
+            if (isNaN(currentBalance) || currentBalance < 0) {
+                showError('个人账户余额不能为负数');
+                isValid = false;
+            }
+            
+            // 验证工资增长率
+            if (isNaN(salaryGrowth) || salaryGrowth < 0 || salaryGrowth > 20) {
+                showError('工资年增长率应在0%-20%之间');
+                isValid = false;
+            }
+            
+            // 验证个人账户收益率
+            if (isNaN(returnRate) || returnRate < 0 || returnRate > 20) {
+                showError('个人账户收益率应在0%-20%之间');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showError(message) {
+            // 创建错误提示元素
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'input-error';
+            errorDiv.style.cssText = `
+                color: #e74c3c;
+                font-size: 0.9rem;
+                margin-top: 5px;
+                padding: 5px 0;
+                display: flex;
+                align-items: center;
+            `;
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            
+            // 添加到页面顶部作为全局错误提示
+            const container = document.querySelector('.container');
+            if (!document.querySelector('.global-error')) {
+                errorDiv.classList.add('global-error');
+                container.insertBefore(errorDiv, container.firstChild);
+            } else {
+                document.querySelector('.global-error').innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            }
+        }
+        
+        function clearErrors() {
+            const globalError = document.querySelector('.global-error');
+            if (globalError) {
+                globalError.remove();
+            }
+            
+            // 清除输入框的错误样式
+            document.querySelectorAll('.form-group input, .form-group select').forEach(element => {
+                element.style.borderColor = '';
+            });
+        }
+        
+        // 缓存机制
+        const CacheManager = {
+            cache: new Map(),
+            
+            // 生成缓存键
+            generateCacheKey: function(settings) {
+                return JSON.stringify({
+                    age: settings.age,
+                    retirementAge: settings.retirementAge,
+                    income: settings.income,
+                    contributionRate: settings.contributionRate,
+                    yearsPaid: settings.yearsPaid,
+                    currentBalance: settings.currentBalance,
+                    salaryGrowth: settings.salaryGrowth,
+                    returnRate: settings.returnRate,
+                    province: settings.province,
+                    city: settings.city
+                });
+            },
+            
+            // 获取缓存
+            get: function(key) {
+                const cached = this.cache.get(key);
+                if (cached && (Date.now() - cached.timestamp < 300000)) { // 5分钟过期
+                    return cached.data;
+                } else {
+                    // 如果过期则删除
+                    if (cached) {
+                        this.cache.delete(key);
+                    }
+                    return null;
+                }
+            },
+            
+            // 设置缓存
+            set: function(key, data) {
+                this.cache.set(key, {
+                    data: data,
+                    timestamp: Date.now()
+                });
+            },
+            
+            // 清除缓存
+            clear: function() {
+                this.cache.clear();
+            },
+            
+            // 获取缓存大小
+            size: function() {
+                return this.cache.size;
+            }
+        };
+        
+        // 数据持久化功能
+        const DataPersistence = {
+            // 保存当前设置
+            saveCurrentSettings: function() {
+                const settings = {
+                    age: document.getElementById('age').value,
+                    retirementAge: document.getElementById('retirement-age').value,
+                    income: document.getElementById('income').value,
+                    contributionRate: document.getElementById('contribution-rate').value,
+                    yearsPaid: document.getElementById('years-paid').value,
+                    currentBalance: document.getElementById('current-balance').value,
+                    salaryGrowth: document.getElementById('salary-growth').value,
+                    returnRate: document.getElementById('return-rate').value,
+                    province: document.getElementById('province').value,
+                    city: document.getElementById('city').value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('pensionCalculatorSettings', JSON.stringify(settings));
+                alert('设置已保存！');
+            },
+            
+            // 加载保存的设置
+            loadSavedSettings: function() {
+                const savedSettings = localStorage.getItem('pensionCalculatorSettings');
+                if (savedSettings) {
+                    try {
+                        const settings = JSON.parse(savedSettings);
+                        
+                        // 恢复各项设置
+                        document.getElementById('age').value = settings.age || 30;
+                        document.getElementById('retirement-age').value = settings.retirementAge || 60;
+                        document.getElementById('income').value = settings.income || 6000;
+                        document.getElementById('contribution-rate').value = settings.contributionRate || 100;
+                        document.getElementById('years-paid').value = settings.yearsPaid || 10;
+                        document.getElementById('current-balance').value = settings.currentBalance || 30000;
+                        document.getElementById('salary-growth').value = settings.salaryGrowth || 0;
+                        document.getElementById('return-rate').value = settings.returnRate || 5;
+                        
+                        // 更新显示值
+                        updateValueDisplay(document.getElementById('age'), document.getElementById('age-value'));
+                        updateValueDisplay(document.getElementById('income'), document.getElementById('income-value'));
+                        updateValueDisplay(document.getElementById('contribution-rate'), document.getElementById('contribution-rate-value'));
+                        updateValueDisplay(document.getElementById('years-paid'), document.getElementById('years-paid-value'));
+                        updateValueDisplay(document.getElementById('current-balance'), document.getElementById('current-balance-value'));
+                        updateValueDisplay(document.getElementById('salary-growth'), document.getElementById('salary-growth-value'));
+                        updateValueDisplay(document.getElementById('return-rate'), document.getElementById('return-rate-value'));
+                        
+                        // 设置省份和城市
+                        if (settings.province) {
+                            document.getElementById('province').value = settings.province;
+                            
+                            // 触发省份选择事件以加载对应的城市
+                            const provinceEvent = new Event('change');
+                            document.getElementById('province').dispatchEvent(provinceEvent);
+                            
+                            // 等待城市加载完成后设置城市值
+                            setTimeout(() => {
+                                if (settings.city) {
+                                    document.getElementById('city').value = settings.city;
+                                    
+                                    // 触发城市选择事件
+                                    const cityEvent = new Event('change');
+                                    document.getElementById('city').dispatchEvent(cityEvent);
+                                }
+                            }, 100);
+                        }
+                        
+                        // 重新计算养老金
+                        calculatePension();
+                        
+                        return true;
+                    } catch (e) {
+                        console.error('加载保存的设置失败:', e);
+                        return false;
+                    }
+                }
+                return false;
+            },
+            
+            // 保存计算历史
+            saveCalculationHistory: function(result) {
+                const history = JSON.parse(localStorage.getItem('pensionCalculatorHistory') || '[]');
+                
+                const entry = {
+                    result: result,
+                    settings: {
+                        age: document.getElementById('age').value,
+                        retirementAge: document.getElementById('retirement-age').value,
+                        income: document.getElementById('income').value,
+                        contributionRate: document.getElementById('contribution-rate').value,
+                        yearsPaid: document.getElementById('years-paid').value,
+                        currentBalance: document.getElementById('current-balance').value,
+                        salaryGrowth: document.getElementById('salary-growth').value,
+                        returnRate: document.getElementById('return-rate').value,
+                        province: document.getElementById('province').value,
+                        city: document.getElementById('city').value
+                    },
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toLocaleString('zh-CN')
+                };
+                
+                // 限制历史记录数量为20条
+                if (history.length >= 20) {
+                    history.shift(); // 删除最旧的记录
+                }
+                
+                history.push(entry);
+                localStorage.setItem('pensionCalculatorHistory', JSON.stringify(history));
+            },
+            
+            // 获取计算历史
+            getCalculationHistory: function() {
+                return JSON.parse(localStorage.getItem('pensionCalculatorHistory') || '[]');
+            },
+            
+            // 清除所有保存的数据
+            clearAllData: function() {
+                localStorage.removeItem('pensionCalculatorSettings');
+                localStorage.removeItem('pensionCalculatorHistory');
+            }
+        };
+        
+        // 页面加载时尝试恢复设置
+        window.addEventListener('load', function() {
+            DataPersistence.loadSavedSettings();
+        });
+        
+        function showLoading() {
+            // 创建加载遮罩
+            let overlay = document.getElementById('loading-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'loading-overlay';
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = `
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>正在计算中...</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+        
+        function calculatePension() {
+            // 首先验证输入
+            if (!validateInputs()) {
+                return;
+            }
+            
+            // 准备设置对象用于缓存
+            const settings = {
+                age: document.getElementById('age').value,
+                retirementAge: document.getElementById('retirement-age').value,
+                income: document.getElementById('income').value,
+                contributionRate: document.getElementById('contribution-rate').value,
+                yearsPaid: document.getElementById('years-paid').value,
+                currentBalance: document.getElementById('current-balance').value,
+                salaryGrowth: document.getElementById('salary-growth').value,
+                returnRate: document.getElementById('return-rate').value,
+                province: document.getElementById('province').value,
+                city: document.getElementById('city').value
+            };
+            
+            // 生成缓存键
+            const cacheKey = CacheManager.generateCacheKey(settings);
+            
+            // 尝试从缓存获取结果
+            const cachedResult = CacheManager.get(cacheKey);
+            if (cachedResult) {
+                // 使用缓存的结果
+                applyCalculationResult(cachedResult);
+                return;
+            }
+            
+            // 显示加载状态
+            showLoading();
+            
+            // 使用setTimeout确保UI更新后再执行计算
+            setTimeout(() => {
+                try {
+                    // 获取输入值
+                    const age = parseInt(document.getElementById('age').value);
+                    const retirementAge = parseInt(document.getElementById('retirement-age').value);
+                    const income = parseInt(document.getElementById('income').value);
+                    const contributionRate = parseInt(document.getElementById('contribution-rate').value) / 100;
+                    const yearsPaid = parseInt(document.getElementById('years-paid').value);
+                    const currentBalance = parseInt(document.getElementById('current-balance').value);
+                    const salaryGrowth = parseFloat(document.getElementById('salary-growth').value) / 100;
+                    const returnRate = parseFloat(document.getElementById('return-rate').value) / 100;
+                    const province = document.getElementById('province').value;
+                    const city = document.getElementById('city').value;
+                    
+                    // 获取退休地平均工资
+                    let localAvgSalary = 0;
+                    if (avgSalaryData && avgSalaryData["全国"] && avgSalaryData["全国"]["全国"]) {
+                        if (province && city) {
+                            if (avgSalaryData[province] && avgSalaryData[province][city]) {
+                                localAvgSalary = avgSalaryData[province][city];
+                            } else if (province === "全国") {
+                                localAvgSalary = avgSalaryData["全国"]["全国"];
+                            } else {
+                                localAvgSalary = avgSalaryData[province] && avgSalaryData[province]["其他"] ? avgSalaryData[province]["其他"] : avgSalaryData["全国"]["全国"];
+                            }
+                        } else {
+                            localAvgSalary = avgSalaryData["全国"]["全国"];
+                        }
+                    } else {
+                        // 如果数据未加载，使用默认值
+                        localAvgSalary = 10245;
+                    }
+                    
+                    // 计算总工作年限
+                    const totalYears = retirementAge - age;
+                    const totalContributionYears = yearsPaid + totalYears;
+                    
+                    // 计算基础养老金
+                    // 本人指数化月平均缴费工资（简化计算）
+                    const indexedSalary = income * contributionRate;
+                    
+                    // 基础养老金公式：(退休时上年度社平工资 + 本人指数化月平均缴费工资) / 2 × 缴费年限 × 1%
+                    const basePension = (localAvgSalary + indexedSalary) / 2 * totalContributionYears * 0.01;
+                    
+                    // 计算个人账户养老金
+                    // 模拟计算个人账户积累
+                    let personalAccount = currentBalance;
+                    let currentSalary = income;
+                    
+                    // 已缴费年限积累（简化计算）
+                    personalAccount += yearsPaid * 12 * currentSalary * 0.08 * Math.pow(1 + returnRate, yearsPaid);
+                    
+                    // 未来缴费年限积累（复利计算）
+                    for (let i = 1; i <= totalYears; i++) {
+                        currentSalary *= (1 + salaryGrowth);
+                        const annualContribution = 12 * currentSalary * 0.08;
+                        personalAccount += annualContribution * Math.pow(1 + returnRate, totalYears - i + 1);
+                    }
+                    
+                    // 计发月数（根据退休年龄）
+                    let monthsFactor;
+                    if (retirementAge <= 50) {
+                        monthsFactor = 195;
+                    } else if (retirementAge <= 55) {
+                        monthsFactor = 170;
+                    } else if (retirementAge <= 60) {
+                        monthsFactor = 139;
+                    } else if (retirementAge <= 65) {
+                        monthsFactor = 101;
+                    } else {
+                        // 65岁以上，按线性递减计算
+                        monthsFactor = Math.max(80, 101 - (retirementAge - 65) * 4);
+                    }
+                    
+                    const personalPension = personalAccount / monthsFactor;
+                    
+                    // 总养老金
+                    const totalPension = basePension + personalPension;
+                    
+                    // 养老金替代率（养老金/退休前收入）
+                    const replacementRate = (totalPension / (currentSalary * 0.8)) * 100;
+                    
+                    // 创建结果对象
+                    const resultData = {
+                        totalPension: Math.round(totalPension),
+                        basePension: Math.round(basePension),
+                        personalPension: Math.round(personalPension),
+                        totalContributionYears: totalContributionYears,
+                        replacementRate: Math.round(replacementRate),
+                        localAvgSalary: Math.round(localAvgSalary)
+                    };
+                    
+                    // 应用计算结果到UI
+                    applyCalculationResult(resultData);
+                    
+                    // 保存到缓存
+                    CacheManager.set(cacheKey, resultData);
+                    
+                    // 保存计算历史
+                    DataPersistence.saveCalculationHistory(resultData);
+                } catch (error) {
+                    console.error('计算失败:', error);
+                    showError('计算过程中出现错误，请检查输入参数或刷新页面重试');
+                } finally {
+                    // 隐藏加载状态
+                    hideLoading();
+                }
+            }, 100); // 延迟100毫秒以确保用户能看到加载状态
+        }
+        
+        // 初始计算
+        setTimeout(() => {
+            calculatePension();
+        }, 1000); // 延迟1秒以确保数据加载完成
+    </script>
+</body>
+</html>
